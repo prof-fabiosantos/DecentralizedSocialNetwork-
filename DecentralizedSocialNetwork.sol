@@ -47,6 +47,7 @@ contract DecentralizedSocialNetwork {
     checkOwner()
     public {
     ownerMessage = _content;
+    console.log("Post message:", _content);
   }
 
   // -------------- Validation funcs ------------------
