@@ -31,6 +31,22 @@ contract DecentralizedSocialNetwork {
         owner = msg.sender; // 'msg.sender' is sender of current call, contract deployer for a constructor        
     }
   
+// -------------- Modifiers ------------------
+
+  modifier checkValidIndex(uint i) {
+    require(i < getMessageCount());
+    require(i >= 0); _;
+  }
+
+  modifier checkLength(string memory _content) {
+    require(strlen(_content) <= limitPostLength); _;
+  }
+
+  modifier checkOwner() {
+    require(owner==msg.sender); _;
+  }
+  
+
   // ----------- Post functions ---------------------
   
   function postMessage(string memory _content)
@@ -50,20 +66,6 @@ contract DecentralizedSocialNetwork {
     console.log("Post message:", _content);
   }
 
-  // -------------- Validation funcs ------------------
-
-  modifier checkValidIndex(uint i) {
-    require(i < getMessageCount());
-    require(i >= 0); _;
-  }
-
-  modifier checkLength(string memory _content) {
-    require(strlen(_content) <= limitPostLength); _;
-  }
-
-  modifier checkOwner() {
-    require(owner==msg.sender); _;
-  }
   
   // ---------------- Public Getters --------------------
   
