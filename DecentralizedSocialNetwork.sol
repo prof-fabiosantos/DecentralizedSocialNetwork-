@@ -13,18 +13,19 @@ contract DecentralizedSocialNetwork {
   // Post length hard-coded and fixed on contract creation
   uint16 limitPostLength = 280; 
 
-  // Struct of post
-  struct _postContent {
+  // Struct of a Post
+  struct Post {
     string contents;
     address authorAddress;
     uint timestamp;
+    uint256 likes;
   }
 
   //message of owner
-  string ownerMessage;
+  string ownerPost;
   
   //array of messages
-  _postContent[] Messages;  
+  Post[] Posts;  
   
   constructor() {
         console.log("Owner contract deployed by:", msg.sender);
@@ -34,7 +35,7 @@ contract DecentralizedSocialNetwork {
 // -------------- Modifiers ------------------
 
   modifier checkValidIndex(uint i) {
-    require(i < getMessageCount());
+    require(i < getPostsCount());
     require(i >= 0); _;
   }
 
@@ -49,44 +50,48 @@ contract DecentralizedSocialNetwork {
 
   // ----------- Post functions ---------------------
   
-  function postMessage(string memory _content)
+  function sendPost(string memory _content)
     checkLength(_content)
     public {
-    Messages.push(_postContent(_content, msg.sender, block.timestamp));
-    console.log("author Address:", msg.sender);
+    Posts.push(Post(_content, msg.sender, block.timestamp,0));
+    console.log("Author Address:", msg.sender);
     console.log("Post message:", _content);
-    console.log("timestamp:", block.timestamp);
+    console.log("Timestamp:", block.timestamp);
   }
 
   function postOwnerMessage(string memory _content)
     checkLength(_content)
     checkOwner()
     public {
-    ownerMessage = _content;
+    ownerPost = _content;
     console.log("Post message:", _content);
   }
 
+  function setLikesPost(uint i) checkValidIndex(i)
+    public {
+    Posts[i].likes+=1;
+  }
   
   // ---------------- Public Getters --------------------
   
-  function getMessageCount()
+  function getPostsCount()
     public view returns (uint) {
-    return Messages.length;
+    return Posts.length;
   }
 
-  function getMessageContents(uint i) checkValidIndex(i)
+  function getPostContents(uint i) checkValidIndex(i)
     public view returns (string memory) {
-    return Messages[i].contents;
+    return Posts[i].contents;
   }
 
-  function getMessageAddress(uint i) checkValidIndex(i)
+  function getPostAddress(uint i) checkValidIndex(i)
     public view returns (address) {
-    return Messages[i].authorAddress;
+    return Posts[i].authorAddress;
   }
 
-  function getMessageTimestamp(uint i) checkValidIndex(i)
+  function getPostTimestamp(uint i) checkValidIndex(i)
     public view returns (uint) {
-    return Messages[i].timestamp;
+    return Posts[i].timestamp;
   }
 
   function getOwnerAddress() public view returns (address) {
@@ -97,8 +102,13 @@ contract DecentralizedSocialNetwork {
     return limitPostLength;
   }
   
-  function getOwnerMessage() public view returns (string memory) {
-    return ownerMessage;
+  function getOwnerPost() public view returns (string memory) {
+    return ownerPost;
+  }
+
+  function getLikesPost(uint i) checkValidIndex(i)
+    public view returns (uint256) {
+    return Posts[i].likes;
   }
 
   // ---------------- Utility funcs --------------------
